@@ -1,0 +1,44 @@
+import pymonetdb
+
+import time
+
+from airflow import DAG
+
+from datetime import datetime
+
+# Connect to MonetDB database
+
+conn = pymonetdb.connect(username='username', password='password', hostname='hostname', port=port, database='database')
+
+# Define SQL query to retrieve flag status from table
+
+sql_query = 'SELECT flag FROM table_name'
+
+while True:
+
+    # Execute SQL query and retrieve flag status
+
+    cursor = conn.cursor()
+
+    cursor.execute(sql_query)
+
+    flag = cursor.fetchone()[0]
+
+    # Check flag status and either execute DAG or wait for 2 minutes
+
+    if flag == 1:
+
+        # Define DAG to execute
+
+        dag = DAG('my_dag', start_date=datetime.now())
+
+        # Execute DAG
+
+        dag.run()
+
+    else:
+
+        # Wait for 2 minutes
+
+        time.sleep(120)
+
